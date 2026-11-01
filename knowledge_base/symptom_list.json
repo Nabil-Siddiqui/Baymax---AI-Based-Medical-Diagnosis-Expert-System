@@ -1,0 +1,74 @@
+[
+  {
+    "id": "fever",
+    "label": "Fever"
+  },
+  {
+    "id": "cough",
+    "label": "Cough"
+  },
+  {
+    "id": "fatigue",
+    "label": "Fatigue"
+  },
+  {
+    "id": "headache",
+    "label": "Headache"
+  },
+  {
+    "id": "chills",
+    "label": "Chills"
+  },
+  {
+    "id": "sweating",
+    "label": "Sweating"
+  },
+  {
+    "id": "vomiting",
+    "label": "Vomiting"
+  },
+  {
+    "id": "thirst",
+    "label": "Excessive Thirst"
+  },
+  {
+    "id": "weight_loss",
+    "label": "Weight Loss"
+  },
+  {
+    "id": "frequent_urination",
+    "label": "Frequent Urination"
+  },
+  {
+    "id": "nausea",
+    "label": "Nausea"
+  },
+  {
+    "id": "light_sensitivity",
+    "label": "Light Sensitivity"
+  },
+  {
+    "id": "loss_of_smell",
+    "label": "Loss of Smell"
+  },
+  {
+    "id": "sore_throat",
+    "label": "Sore Throat"
+  },
+  {
+    "id": "runny_nose",
+    "label": "Runny Nose"
+  },
+  {
+    "id": "sneezing",
+    "label": "Sneezing"
+  },
+  {
+    "id": "body_ache",
+    "label": "Body Ache"
+  },
+  {
+    "id": "diarrhea",
+    "label": "Diarrhea"
+  }
+]

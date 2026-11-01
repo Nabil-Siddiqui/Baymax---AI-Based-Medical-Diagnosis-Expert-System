@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Baymax - Diagnosis Result</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    />
+</head>
+<body class="page-result">
+
+    <header class="topbar">
+        <div class="topbar__brand">
+            <span class="brand-dot" aria-hidden="true"></span>
+            <span class="brand-name">Baymax</span>
+        </div>
+        <nav class="topbar__nav" aria-label="Primary">
+            <a class="btn btn--ghost btn--sm" href="{{ url_for('index') }}">
+                Start over
+            </a>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        {# ---------------------------------------------------------------- #}
+        {# Error path: diagnosis failed or no result was returned.         #}
+        {# ---------------------------------------------------------------- #}
+        {% if error or not result %}
+        <section class="hero hero--result" aria-labelledby="result-error-title">
+            <div class="hero__left">
+                <div class="speech-bubble" role="status" aria-live="polite">
+                    <p class="speech-bubble__text">
+                        I'm sorry, something went wrong while analyzing your
+                        symptoms.
+                    </p>
+                </div>
+                <figure class="baymax" aria-hidden="true">
+                    <div class="baymax__head">
+                        <div class="baymax__eye baymax__eye--left"></div>
+                        <div class="baymax__eye baymax__eye--right"></div>
+                        <div class="baymax__eye-line"></div>
+                    </div>
+                    <div class="baymax__body">
+                        <div class="baymax__heart"></div>
+                        <div class="baymax__belt"></div>
+                    </div>
+                    <div class="baymax__arm baymax__arm--left"></div>
+                    <div class="baymax__arm baymax__arm--right"></div>
+                    <div class="baymax__shadow"></div>
+                </figure>
+            </div>
+
+            <div class="hero__right">
+                <div class="panel">
+                    <h1 id="result-error-title" class="panel__title">
+                        Unable to complete diagnosis
+                    </h1>
+                    <p class="panel__subtitle">
+                        {{ error or 'No diagnosis result was produced. Please try again with at least one symptom.' }}
+                    </p>
+                    <div class="form-actions">
+                        <a href="{{ url_for('index') }}" class="btn btn--primary btn--lg">
+                            Try again
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        {% else %}
+
+        {# ---------------------------------------------------------------- #}
+        {# Success path: render the full diagnosis report.                #}
+        {# ---------------------------------------------------------------- #}
+
+        {% set top = result.top_diagnosis %}
+
+        <section class="hero hero--result" aria-labelledby="result-title">
+
+            <div class="hero__left">
+                <div class="speech-bubble" role="status" aria-live="polite">
+                    <p class="speech-bubble__text">
+                        {% if top %}
+                            Based on what you told me, this is what I think
+                            you may have.
+                        {% else %}
+                            I could not find a clear match for your symptoms.
+                        {% endif %}
+                    </p>
+                </div>
+
+                <figure class="baymax" aria-hidden="true">
+                    <div class="baymax__head">
+                        <div class="baymax__eye baymax__eye--left"></div>
+                        <div class="baymax__eye baymax__eye--right"></div>
+                        <div class="baymax__eye-line"></div>
+                    </div>
+                    <div class="baymax__body">
+                        <div class="baymax__heart"></div>
+                        <div class="baymax__belt"></div>
+                    </div>
+                    <div class="baymax__arm baymax__arm--left"></div>
+                    <div class="baymax__arm baymax__arm--right"></div>
+                    <div class="baymax__shadow"></div>
+                </figure>
+
+                <figcaption class="hero__caption">
+                    Personal healthcare companion (educational prototype).
+                </figcaption>
+            </div>
+
+            <div class="hero__right">
+
+                {% if result.warnings %}
+                <div class="notice notice--warning" role="status">
+                    {% for warn in result.warnings %}
+                    <p>{{ warn }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {# ---------- Top diagnosis card ---------- #}
+                {% if top %}
+                <article
+                    class="panel diagnosis-card"
+                    aria-labelledby="result-title"
+                >
+                    <header class="diagnosis-card__header">
+                        <p class="diagnosis-card__eyebrow">Most likely</p>
+                        <h1 id="result-title" class="diagnosis-card__title">
+                            {{ top.disease }}
+                        </h1>
+                        <div class="confidence">
+                            <div class="confidence__bar" aria-hidden="true">
+                                <div
+                                    class="confidence__fill"
+                                    style="width: {{ (top.final_score * 100) | round(1) }}%;"
+                                ></div>
+                            </div>
+                            <p class="confidence__text">
+                                Confidence:
+                                <strong>{{ top.final_score | pct }}</strong>
+                            </p>
+                        </div>
+                    </header>
+
+                    {% if top.description %}
+                    <p class="diagnosis-card__description">
+                        {{ top.description }}
+                    </p>
+                    {% endif %}
+
+                    {% if top.recommendation %}
+                    <div class="recommendation">
+                        <h2 class="recommendation__title">What you can do</h2>
+                        <p class="recommendation__text">
+                            {{ top.recommendation }}
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    {# Matched / Missing / Unrelated symptoms #}
+                    <div class="match-summary">
+                        {% if top.matched_symptom_labels %}
+                        <div class="match-summary__group">
+                            <h3 class="match-summary__title">
+                                Symptoms that match
+                            </h3>
+                            <ul class="chip-list chip-list--static">
+                                {% for label in top.matched_symptom_labels %}
+                                <li class="chip chip--match">
+                                    {{ label }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if top.missing_symptom_labels %}
+                        <div class="match-summary__group">
+                            <h3 class="match-summary__title">
+                                Typical symptoms you didn't report
+                            </h3>
+                            <ul class="chip-list chip-list--static">
+                                {% for label in top.missing_symptom_labels %}
+                                <li class="chip chip--missing">
+                                    {{ label }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        {% if top.unrelated_symptom_labels %}
+                        <div class="match-summary__group">
+                            <h3 class="match-summary__title">
+                                Other symptoms you reported
+                            </h3>
+                            <ul class="chip-list chip-list--static">
+                                {% for label in top.unrelated_symptom_labels %}
+                                <li class="chip chip--unrelated">
+                                    {{ label }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
+                </article>
+                {% else %}
+                <article class="panel">
+                    <h1 class="panel__title">No clear match</h1>
+                    <p class="panel__subtitle">
+                        I could not confidently match your symptoms to any
+                        known condition in my knowledge base.
+                    </p>
+                </article>
+                {% endif %}
+
+                {# ---------- Other likely candidates ---------- #}
+                {% if result.final_top_k and result.final_top_k|length > 1 %}
+                <article class="panel">
+                    <header class="panel__header">
+                        <h2 class="panel__title">Other possibilities</h2>
+                        <p class="panel__subtitle">
+                            These conditions also matched some of your symptoms.
+                        </p>
+                    </header>
+
+                    <ul class="ranking">
+                        {% for disease, score in result.final_top_k %}
+                            {% if not top or disease != top.disease %}
+                            <li class="ranking__item">
+                                <div class="ranking__row">
+                                    <span class="ranking__name">{{ disease }}</span>
+                                    <span class="ranking__score">
+                                        {{ score | pct }}
+                                    </span>
+                                </div>
+                                <div class="ranking__bar" aria-hidden="true">
+                                    <div
+                                        class="ranking__fill"
+                                        style="width: {{ (score * 100) | round(1) }}%;"
+                                    ></div>
+                                </div>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </article>
+                {% endif %}
+
+                {# ---------- Your reported symptoms ---------- #}
+                <article class="panel">
+                    <header class="panel__header">
+                        <h2 class="panel__title">Symptoms you reported</h2>
+                        <p class="panel__subtitle">
+                            This is what I used to reason about your diagnosis.
+                        </p>
+                    </header>
+                    {% if result.input_symptom_labels %}
+                    <ul class="chip-list chip-list--static">
+                        {% for label in result.input_symptom_labels %}
+                        <li class="chip">{{ label }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>No symptoms were provided.</p>
+                    {% endif %}
+                </article>
+
+                {# ---------- Transparency / How Baymax decided ---------- #}
+                <article class="panel transparency" aria-labelledby="reasoning-title">
+                    <header class="panel__header">
+                        <h2 id="reasoning-title" class="panel__title">
+                            How I reached this conclusion
+                        </h2>
+                        <p class="panel__subtitle">
+                            Baymax combines several AI techniques. Here is what
+                            each one thought.
+                        </p>
+                    </header>
+
+                    <div class="reasoning-grid">
+
+                        {# Rule-based view #}
+                        <section class="reasoning-card">
+                            <h3 class="reasoning-card__title">
+                                Rule-based reasoning
+                            </h3>
+                            <p class="reasoning-card__hint">
+                                Knowledge-base symptom matching.
+                            </p>
+                            <ol class="reasoning-list">
+                                {% for disease, score in (result.rule_results or [])[:3] %}
+                                <li>
+                                    <span class="reasoning-list__name">{{ disease }}</span>
+                                    <span class="reasoning-list__score">
+                                        {{ score | pct }}
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ol>
+                        </section>
+
+                        {# Bayesian view #}
+                        <section class="reasoning-card">
+                            <h3 class="reasoning-card__title">
+                                Bayesian reasoning
+                            </h3>
+                            <p class="reasoning-card__hint">
+                                Probabilistic inference under uncertainty.
+                            </p>
+                            <ol class="reasoning-list">
+                                {% for disease, prob in (result.bayes_results or [])[:3] %}
+                                <li>
+                                    <span class="reasoning-list__name">{{ disease }}</span>
+                                    <span class="reasoning-list__score">
+                                        {{ prob | pct }}
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ol>
+                        </section>
+
+                        {# ML view #}
+                        <section class="reasoning-card">
+                            <h3 class="reasoning-card__title">
+                                Machine learning
+                            </h3>
+                            <p class="reasoning-card__hint">
+                                {% if result.ml_results %}
+                                    Trained
+                                    {{ result.ml_results.model_type
+                                        | replace('_', ' ') }}
+                                    classifier.
+                                {% else %}
+                                    Not available.
+                                {% endif %}
+                            </p>
+                            {% if result.ml_results %}
+                            <ol class="reasoning-list">
+                                {% for disease, prob in result.ml_results.ranked[:3] %}
+                                <li>
+                                    <span class="reasoning-list__name">{{ disease }}</span>
+                                    <span class="reasoning-list__score">
+                                        {{ prob | pct }}
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ol>
+                            {% else %}
+                            <p class="reasoning-card__empty">
+                                The ML model has not been trained yet.
+                            </p>
+                            {% endif %}
+                        </section>
+
+                        {# Search view #}
+                        <section class="reasoning-card">
+                            <h3 class="reasoning-card__title">
+                                Best-First Search
+                            </h3>
+                            <p class="reasoning-card__hint">
+                                Heuristic:
+                                {{ result.search_results.heuristic
+                                    if result.search_results else 'n/a' }}
+                                ·
+                                Nodes expanded:
+                                {{ result.search_results.nodes_expanded
+                                    if result.search_results else 0 }}
+                            </p>
+                            {% if result.search_results
+                                  and result.search_results.expansion_order %}
+                            <ol class="reasoning-list reasoning-list--ordered">
+                                {% for disease in result.search_results.expansion_order[:5] %}
+                                <li>
+                                    <span class="reasoning-list__name">{{ disease }}</span>
+                                </li>
+                                {% endfor %}
+                            </ol>
+                            {% endif %}
+                        </section>
+
+                    </div>
+
+                    {# Component weights used in the final ensemble #}
+                    {% if result.weights %}
+                    <div class="weights" aria-label="Final ensemble weights">
+                        <h3 class="weights__title">Final ensemble weights</h3>
+                        <ul class="weights__list">
+                            {% for name, value in result.weights.items() %}
+                            <li class="weights__item">
+                                <span class="weights__name">
+                                    {{ name | capitalize }}
+                                </span>
+                                <span class="weights__value">
+                                    {{ value | pct }}
+                                </span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </article>
+
+                {# ---------- Actions and disclaimer ---------- #}
+                <div class="form-actions form-actions--end">
+                    <a href="{{ url_for('index') }}" class="btn btn--primary btn--lg">
+                        Start over
+                    </a>
+                </div>
+
+                <p class="form-disclaimer">
+                    Baymax is an educational AI prototype. It is
+                    <strong>not</strong> a substitute for professional
+                    medical advice, diagnosis, or treatment. If your symptoms
+                    are severe or persistent, please contact a qualified
+                    healthcare professional.
+                </p>
+
+            </div>
+        </section>
+
+        {% endif %}
+
+    </main>
+
+    <footer class="footer">
+        <p class="footer__text">
+            Baymax - AI-Based Expert System for Medical Diagnosis.
+            For academic demonstration only.
+        </p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

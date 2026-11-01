@@ -1,0 +1,41 @@
+Baymax - Experiment Details
+========================================
+
+Dataset
+----------------------------------------
+Source file:        C:\Users\Nabil Siddiqui\Desktop\Baymax\data\medical_dataset.csv
+Number of features: 18
+Feature columns:    ['fever', 'cough', 'fatigue', 'headache', 'chills', 'sweating', 'vomiting', 'thirst', 'weight_loss', 'frequent_urination', 'nausea', 'light_sensitivity', 'loss_of_smell', 'sore_throat', 'runny_nose', 'sneezing', 'body_ache', 'diarrhea']
+Disease labels:     ['Allergies', 'COVID-19', 'Common Cold', 'Diabetes', 'Flu', 'Food Poisoning', 'Malaria', 'Migraine']
+
+Generation model probabilities (Naive Bayes assumption):
+  P_core: 0.85
+  P_optional: 0.4
+  P_unrelated: 0.05
+
+Train/Test Split
+----------------------------------------
+Test fraction:      0.2
+Random state:       42
+Test set size:      120
+Stratification:     stratified by disease label
+
+Models and Results
+----------------------------------------
+Model: decision_tree
+  Accuracy:            0.7750
+  Precision (weighted):0.8069
+  Recall (weighted):   0.7750
+  F1-score (weighted): 0.7703
+
+Model: random_forest
+  Accuracy:            0.8250
+  Precision (weighted):0.8276
+  Recall (weighted):   0.8250
+  F1-score (weighted): 0.8236
+
+Model: naive_bayes
+  Accuracy:            0.8667
+  Precision (weighted):0.8707
+  Recall (weighted):   0.8667
+  F1-score (weighted): 0.8610

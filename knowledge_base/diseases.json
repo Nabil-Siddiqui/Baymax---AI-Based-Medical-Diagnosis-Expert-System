@@ -1,0 +1,134 @@
+{
+  "Flu": {
+    "name": "Flu",
+    "core_symptoms": [
+      "fever",
+      "cough",
+      "fatigue",
+      "headache",
+      "sore_throat",
+      "body_ache"
+    ],
+    "optional_symptoms": [
+      "runny_nose",
+      "nausea"
+    ],
+    "prior": 0.125,
+    "description": "Influenza, commonly known as the flu, is a contagious respiratory illness caused by influenza viruses. It can cause mild to severe symptoms and typically resolves within one to two weeks.",
+    "recommendation": "Rest, stay hydrated, and consider over-the-counter medication for symptom relief. Seek medical attention if symptoms worsen or persist beyond a week."
+  },
+  "Common Cold": {
+    "name": "Common Cold",
+    "core_symptoms": [
+      "cough",
+      "sore_throat",
+      "runny_nose",
+      "sneezing"
+    ],
+    "optional_symptoms": [
+      "headache",
+      "fatigue"
+    ],
+    "prior": 0.125,
+    "description": "The common cold is a mild viral infection of the upper respiratory tract. It is usually harmless and resolves on its own within a week or two.",
+    "recommendation": "Rest, stay hydrated, and use over-the-counter remedies as needed. Consult a doctor if symptoms persist beyond ten days."
+  },
+  "COVID-19": {
+    "name": "COVID-19",
+    "core_symptoms": [
+      "fever",
+      "cough",
+      "fatigue",
+      "loss_of_smell",
+      "sore_throat",
+      "headache"
+    ],
+    "optional_symptoms": [
+      "body_ache",
+      "nausea"
+    ],
+    "prior": 0.125,
+    "description": "COVID-19 is a respiratory illness caused by the SARS-CoV-2 virus. Symptoms range from mild to severe and may include loss of smell or taste, which is a distinguishing feature.",
+    "recommendation": "Isolate to prevent spread, monitor symptoms, and take a COVID-19 test. Seek medical care if breathing becomes difficult."
+  },
+  "Malaria": {
+    "name": "Malaria",
+    "core_symptoms": [
+      "fever",
+      "chills",
+      "sweating",
+      "vomiting",
+      "headache",
+      "body_ache"
+    ],
+    "optional_symptoms": [
+      "fatigue",
+      "nausea"
+    ],
+    "prior": 0.125,
+    "description": "Malaria is a serious disease caused by a parasite transmitted through the bite of infected mosquitoes. It typically presents with cyclical fever, chills, and sweating.",
+    "recommendation": "Seek medical attention immediately. Malaria requires prompt diagnosis and antimalarial treatment to prevent complications."
+  },
+  "Diabetes": {
+    "name": "Diabetes",
+    "core_symptoms": [
+      "fatigue",
+      "thirst",
+      "weight_loss",
+      "frequent_urination"
+    ],
+    "optional_symptoms": [
+      "nausea",
+      "headache"
+    ],
+    "prior": 0.125,
+    "description": "Diabetes is a chronic condition that affects how the body processes blood sugar. Symptoms include excessive thirst, frequent urination, fatigue, and unexplained weight loss.",
+    "recommendation": "Consult a healthcare provider for blood sugar testing. Long-term management includes diet, exercise, and possibly medication."
+  },
+  "Migraine": {
+    "name": "Migraine",
+    "core_symptoms": [
+      "headache",
+      "nausea",
+      "light_sensitivity",
+      "vomiting"
+    ],
+    "optional_symptoms": [
+      "fatigue"
+    ],
+    "prior": 0.125,
+    "description": "A migraine is a neurological condition that often causes intense, throbbing headaches, frequently accompanied by nausea, vomiting, and sensitivity to light or sound.",
+    "recommendation": "Rest in a dark, quiet room and use prescribed medication if available. Consult a doctor if migraines are frequent or severe."
+  },
+  "Food Poisoning": {
+    "name": "Food Poisoning",
+    "core_symptoms": [
+      "vomiting",
+      "nausea",
+      "diarrhea",
+      "fatigue",
+      "fever"
+    ],
+    "optional_symptoms": [
+      "headache"
+    ],
+    "prior": 0.125,
+    "description": "Food poisoning is an illness caused by eating contaminated food. Symptoms typically include vomiting, diarrhea, nausea, and sometimes fever, and usually develop within hours of eating.",
+    "recommendation": "Stay hydrated and rest. Seek medical care if symptoms are severe, last more than two days, or include high fever or signs of dehydration."
+  },
+  "Allergies": {
+    "name": "Allergies",
+    "core_symptoms": [
+      "sneezing",
+      "runny_nose",
+      "cough",
+      "sore_throat"
+    ],
+    "optional_symptoms": [
+      "headache"
+    ],
+    "prior": 0.125,
+    "description": "Allergies occur when the immune system reacts to substances such as pollen, dust, or pet dander. Symptoms often include sneezing, runny nose, and itchy or sore throat.",
+    "recommendation": "Avoid known allergens and consider antihistamines for symptom relief. Consult an allergist for persistent or severe symptoms."
+  }
+}

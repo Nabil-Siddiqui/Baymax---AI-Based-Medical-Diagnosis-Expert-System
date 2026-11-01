@@ -1,0 +1,939 @@
+/* ===================================================================
+   Baymax - Stylesheet
+   ===================================================================
+   Design goals
+   - Make the pure-white Baymax figure pop against a cool, calm,
+     slightly clinical background.
+   - Convey trust, medical care, and friendliness.
+   - Maintain readability and accessibility on all screen sizes.
+   - Keep the entire visual identity in one stylesheet.
+
+   Sections (search-friendly)
+   1. Design tokens (colors, spacing, typography, motion)
+   2. Reset and base styles
+   3. Layout primitives (container, topbar, footer)
+   4. Buttons, badges, notices
+   5. Hero layout (left figure / right panel)
+   6. Baymax figure (CSS-only character)
+   7. Speech bubble
+   8. Panels, fields, dropdown, chips
+   9. Info cards (homepage)
+   10. Diagnosis result components
+   11. Reasoning grid (transparency section)
+   12. Responsive breakpoints
+   13. Utilities and accessibility
+   =================================================================== */
+
+
+/* -------------------------------------------------------------------
+   1. Design tokens
+   ------------------------------------------------------------------- */
+:root {
+    /* Cool gradient palette designed to make white pop */
+    --bg-deep:        #0b1736;
+    --bg-mid:         #122a55;
+    --bg-soft:        #1f4380;
+    --bg-glow:        #2a6fb1;
+
+    /* Surfaces (cards, panels) */
+    --surface:        rgba(255, 255, 255, 0.96);
+    --surface-soft:   rgba(255, 255, 255, 0.86);
+    --surface-line:   rgba(13, 27, 60, 0.08);
+    --surface-shadow: 0 18px 40px rgba(7, 16, 39, 0.35);
+
+    /* Text */
+    --text-strong:    #0c1a36;
+    --text-base:      #1f2a44;
+    --text-muted:     #5a6781;
+    --text-on-dark:   #e8efff;
+    --text-on-dark-2: #b9c6e3;
+
+    /* Brand & accents */
+    --baymax-white:   #ffffff;
+    --baymax-shadow:  rgba(13, 27, 60, 0.35);
+    --baymax-heart:   #e63946;
+    --baymax-eye:     #0a0f1d;
+
+    --accent:         #4cc9f0;
+    --accent-strong:  #3aa8e0;
+    --success:        #2ecc71;
+    --warning:        #f4a261;
+    --danger:         #e76f51;
+
+    /* Typography */
+    --font-sans: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont,
+                 Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    /* Spacing scale */
+    --space-1:  4px;
+    --space-2:  8px;
+    --space-3:  12px;
+    --space-4:  16px;
+    --space-5:  24px;
+    --space-6:  32px;
+    --space-7:  48px;
+    --space-8:  64px;
+
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 22px;
+    --radius-pill: 999px;
+
+    /* Motion */
+    --ease-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --transition: 200ms var(--ease-soft);
+}
+
+
+/* -------------------------------------------------------------------
+   2. Reset & base
+   ------------------------------------------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    color: var(--text-on-dark);
+    line-height: 1.55;
+
+    /* The cool gradient that makes white Baymax stand out */
+    background:
+        radial-gradient(1200px 800px at 80% -10%, var(--bg-glow) 0%, transparent 60%),
+        radial-gradient(900px 700px at -10% 110%, var(--bg-soft) 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 60%, #0e1f44 100%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+
+img, svg { max-width: 100%; display: block; }
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+}
+
+h1, h2, h3, h4 {
+    color: inherit;
+    margin: 0;
+    line-height: 1.2;
+}
+
+p { margin: 0; }
+
+
+/* -------------------------------------------------------------------
+   3. Layout primitives
+   ------------------------------------------------------------------- */
+.container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-5) var(--space-7);
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-4) var(--space-5);
+    max-width: 1180px;
+    margin: 0 auto;
+    color: var(--text-on-dark);
+}
+
+.topbar__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-weight: 700;
+    letter-spacing: 0.4px;
+}
+
+.brand-name {
+    font-size: 1.25rem;
+}
+
+.brand-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--baymax-heart);
+    box-shadow: 0 0 18px rgba(230, 57, 70, 0.85);
+}
+
+.footer {
+    text-align: center;
+    padding: var(--space-6) var(--space-5);
+    color: var(--text-on-dark-2);
+    font-size: 0.9rem;
+}
+
+
+/* -------------------------------------------------------------------
+   4. Buttons, badges, notices
+   ------------------------------------------------------------------- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    border: 1px solid transparent;
+    padding: 12px 18px;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: transform var(--transition),
+                background var(--transition),
+                color var(--transition),
+                box-shadow var(--transition),
+                border-color var(--transition);
+    user-select: none;
+}
+
+.btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.btn--lg     { padding: 14px 22px; font-size: 1rem; }
+.btn--sm     { padding: 8px 14px;  font-size: 0.85rem; }
+
+.btn--primary {
+    background: var(--accent);
+    color: #06223a;
+    box-shadow: 0 10px 24px rgba(76, 201, 240, 0.35);
+}
+.btn--primary:hover    { background: var(--accent-strong); transform: translateY(-1px); }
+.btn--primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+.btn--secondary {
+    background: #ffffff;
+    color: var(--text-strong);
+    border-color: var(--surface-line);
+    box-shadow: 0 6px 14px rgba(7, 16, 39, 0.18);
+}
+.btn--secondary:hover { transform: translateY(-1px); }
+
+.btn--ghost {
+    background: transparent;
+    color: var(--text-on-dark);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+.btn--ghost:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    font-size: 0.85rem;
+    color: var(--text-on-dark);
+}
+
+.badge--status .badge__pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #5be37a;
+    box-shadow: 0 0 0 0 rgba(91, 227, 122, 0.6);
+    animation: pulse 1.6s var(--ease-soft) infinite;
+}
+
+@keyframes pulse {
+    0%   { box-shadow: 0 0 0 0   rgba(91, 227, 122, 0.55); }
+    70%  { box-shadow: 0 0 0 10px rgba(91, 227, 122, 0); }
+    100% { box-shadow: 0 0 0 0   rgba(91, 227, 122, 0); }
+}
+
+.notice {
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    margin-bottom: var(--space-5);
+    border: 1px solid var(--surface-line);
+    background: var(--surface-soft);
+    color: var(--text-strong);
+}
+.notice--warning { border-left: 4px solid var(--warning); }
+
+
+/* -------------------------------------------------------------------
+   5. Hero layout
+   ------------------------------------------------------------------- */
+.hero {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+    gap: var(--space-7);
+    align-items: stretch;
+    padding-top: var(--space-5);
+}
+
+.hero--result { padding-top: var(--space-3); }
+
+.hero__left {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    padding: var(--space-5) 0;
+}
+
+.hero__right {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.hero__caption {
+    color: var(--text-on-dark-2);
+    font-size: 0.9rem;
+    text-align: center;
+    max-width: 320px;
+}
+
+
+/* -------------------------------------------------------------------
+   6. Baymax figure (pure CSS)
+   ------------------------------------------------------------------- */
+.baymax {
+    --bm-scale: 1;
+    position: relative;
+    width: calc(220px * var(--bm-scale));
+    height: calc(360px * var(--bm-scale));
+    margin: 0;
+    filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.35));
+    animation: baymax-float 5s ease-in-out infinite;
+}
+
+@keyframes baymax-float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+}
+
+/* Head */
+.baymax__head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 130px;
+    height: 110px;
+    background: var(--baymax-white);
+    border-radius: 60% 60% 55% 55% / 70% 70% 50% 50%;
+    transform: translateX(-50%);
+    box-shadow:
+        inset -8px -10px 22px rgba(13, 27, 60, 0.06),
+        inset 6px 8px 18px rgba(255, 255, 255, 0.8);
+}
+
+.baymax__eye {
+    position: absolute;
+    top: 55px;
+    width: 14px;
+    height: 14px;
+    background: var(--baymax-eye);
+    border-radius: 50%;
+}
+.baymax__eye--left  { left: 32px;  }
+.baymax__eye--right { right: 32px; }
+
+.baymax__eye-line {
+    position: absolute;
+    top: 60px;
+    left: 46px;
+    right: 46px;
+    height: 3px;
+    background: var(--baymax-eye);
+    border-radius: 3px;
+}
+
+/* Body */
+.baymax__body {
+    position: absolute;
+    top: 95px;
+    left: 50%;
+    width: 200px;
+    height: 240px;
+    background: var(--baymax-white);
+    border-radius: 50% 50% 46% 46% / 38% 38% 60% 60%;
+    transform: translateX(-50%);
+    box-shadow:
+        inset -10px -16px 30px rgba(13, 27, 60, 0.06),
+        inset 8px 10px 22px rgba(255, 255, 255, 0.85);
+}
+
+.baymax__heart {
+    position: absolute;
+    top: 80px;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--baymax-heart);
+    transform: translateX(-50%);
+    box-shadow:
+        0 0 14px rgba(230, 57, 70, 0.65),
+        0 0 30px rgba(230, 57, 70, 0.35);
+    animation: heart-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes heart-glow {
+    0%, 100% { box-shadow: 0 0 14px rgba(230, 57, 70, 0.55), 0 0 24px rgba(230, 57, 70, 0.3); }
+    50%      { box-shadow: 0 0 18px rgba(230, 57, 70, 0.85), 0 0 38px rgba(230, 57, 70, 0.55); }
+}
+
+.baymax__belt {
+    position: absolute;
+    top: 116px;
+    left: 14%;
+    right: 14%;
+    height: 4px;
+    background: rgba(13, 27, 60, 0.08);
+    border-radius: 4px;
+}
+
+/* Arms (attached to the body) */
+.baymax__arm {
+    position: absolute;
+    top: 130px;
+    width: 60px;
+    height: 150px;
+    background: var(--baymax-white);
+    border-radius: 50% 50% 50% 50% / 30% 30% 50% 50%;
+    box-shadow:
+        inset -6px -10px 20px rgba(13, 27, 60, 0.06),
+        inset 4px 6px 14px rgba(255, 255, 255, 0.85);
+}
+.baymax__arm--left  { left:  -22px; transform: rotate(8deg); }
+.baymax__arm--right { right: -22px; transform: rotate(-8deg); }
+
+/* Shadow under Baymax */
+.baymax__shadow {
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    width: 200px;
+    height: 26px;
+    background: radial-gradient(closest-side,
+                rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
+    transform: translateX(-50%);
+    filter: blur(2px);
+}
+
+
+/* -------------------------------------------------------------------
+   7. Speech bubble
+   ------------------------------------------------------------------- */
+.speech-bubble {
+    position: relative;
+    background: var(--surface);
+    color: var(--text-strong);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    max-width: 320px;
+    box-shadow: var(--surface-shadow);
+    margin-bottom: var(--space-3);
+}
+
+.speech-bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 18px;
+    height: 18px;
+    background: var(--surface);
+    transform: translateX(-50%) rotate(45deg);
+    border-bottom-right-radius: 4px;
+    box-shadow: 4px 4px 8px rgba(7, 16, 39, 0.12);
+}
+
+.speech-bubble__text {
+    font-size: 1rem;
+    color: var(--text-strong);
+}
+
+
+/* -------------------------------------------------------------------
+   8. Panels, fields, dropdown, chips
+   ------------------------------------------------------------------- */
+.panel {
+    background: var(--surface);
+    color: var(--text-base);
+    border-radius: var(--radius-lg);
+    padding: var(--space-6);
+    box-shadow: var(--surface-shadow);
+    border: 1px solid var(--surface-line);
+}
+
+.panel__header     { margin-bottom: var(--space-4); }
+.panel__title      { font-size: 1.4rem; color: var(--text-strong); margin: 0 0 6px; }
+.panel__subtitle   { color: var(--text-muted); }
+
+.field { margin-bottom: var(--space-4); }
+
+.field__label {
+    display: inline-block;
+    margin-bottom: var(--space-2);
+    color: var(--text-strong);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.field__row {
+    display: flex;
+    gap: var(--space-3);
+    align-items: stretch;
+}
+
+.field__help {
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.select {
+    flex: 1;
+    appearance: none;
+    background: #fff;
+    color: var(--text-base);
+    border: 1px solid var(--surface-line);
+    border-radius: var(--radius-md);
+    padding: 12px 40px 12px 14px;
+    font-size: 1rem;
+    transition: border-color var(--transition), box-shadow var(--transition);
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-muted) 50%),
+        linear-gradient(135deg, var(--text-muted) 50%, transparent 50%);
+    background-position:
+        calc(100% - 18px) calc(50% - 3px),
+        calc(100% - 12px) calc(50% - 3px);
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+}
+
+.select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(76, 201, 240, 0.25);
+}
+
+/* Chip list (selected symptoms) */
+.chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-4) 0 var(--space-3);
+    padding: var(--space-3);
+    background: rgba(13, 27, 60, 0.04);
+    border-radius: var(--radius-md);
+    min-height: 56px;
+    align-items: center;
+}
+
+.chip-list--static {
+    background: transparent;
+    padding: 0;
+    margin: var(--space-3) 0 0;
+    min-height: 0;
+}
+
+.chip-list__empty {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-style: italic;
+    margin: 0;
+    padding-left: var(--space-1);
+}
+
+.chip {
+    --chip-bg:    #ffffff;
+    --chip-color: var(--text-strong);
+    --chip-bd:    var(--surface-line);
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: var(--chip-bg);
+    color: var(--chip-color);
+    border: 1px solid var(--chip-bd);
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 4px 10px rgba(7, 16, 39, 0.08);
+    transition: transform var(--transition), background var(--transition);
+}
+
+.chip:hover { transform: translateY(-1px); }
+
+.chip__remove {
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(13, 27, 60, 0.06);
+    color: var(--text-muted);
+    border: none;
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.chip__remove:hover { background: rgba(13, 27, 60, 0.12); color: var(--text-strong); }
+
+.chip--match {
+    --chip-bg:    rgba(46, 204, 113, 0.12);
+    --chip-color: #1c7c4d;
+    --chip-bd:    rgba(46, 204, 113, 0.4);
+}
+
+.chip--missing {
+    --chip-bg:    rgba(13, 27, 60, 0.04);
+    --chip-color: var(--text-muted);
+    --chip-bd:    var(--surface-line);
+    font-style: italic;
+}
+
+.chip--unrelated {
+    --chip-bg:    rgba(244, 162, 97, 0.14);
+    --chip-color: #8a4a1a;
+    --chip-bd:    rgba(244, 162, 97, 0.45);
+}
+
+/* Form actions */
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+}
+
+.form-actions--end { justify-content: flex-end; }
+
+.form-disclaimer {
+    margin-top: var(--space-4);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+
+/* -------------------------------------------------------------------
+   9. Info cards (homepage)
+   ------------------------------------------------------------------- */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-7);
+}
+
+.info-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text-on-dark);
+    padding: var(--space-5);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(6px);
+    transition: transform var(--transition), background var(--transition);
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.info-card__title {
+    font-size: 1.05rem;
+    margin-bottom: var(--space-2);
+    color: #ffffff;
+}
+
+.info-card__text {
+    color: var(--text-on-dark-2);
+    font-size: 0.9rem;
+}
+
+
+/* -------------------------------------------------------------------
+   10. Diagnosis result components
+   ------------------------------------------------------------------- */
+.diagnosis-card__eyebrow {
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 0.75rem;
+    color: var(--accent-strong);
+    background: rgba(76, 201, 240, 0.12);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    margin-bottom: var(--space-2);
+}
+
+.diagnosis-card__title {
+    font-size: 2rem;
+    color: var(--text-strong);
+    margin-bottom: var(--space-3);
+}
+
+.diagnosis-card__description {
+    color: var(--text-base);
+    margin-bottom: var(--space-4);
+}
+
+.confidence {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+
+.confidence__bar {
+    flex: 1;
+    height: 12px;
+    background: rgba(13, 27, 60, 0.08);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.confidence__fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) 100%);
+    border-radius: var(--radius-pill);
+    transition: width 600ms var(--ease-soft);
+}
+
+.confidence__text {
+    color: var(--text-strong);
+    font-size: 0.95rem;
+}
+
+.recommendation {
+    background: rgba(76, 201, 240, 0.08);
+    border-left: 4px solid var(--accent);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-4);
+}
+
+.recommendation__title {
+    font-size: 1rem;
+    color: var(--text-strong);
+    margin-bottom: 4px;
+}
+
+.recommendation__text { color: var(--text-base); }
+
+.match-summary {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-4);
+}
+
+.match-summary__title {
+    font-size: 0.95rem;
+    color: var(--text-strong);
+    margin-bottom: var(--space-2);
+}
+
+.ranking { list-style: none; padding: 0; margin: 0; }
+
+.ranking__item        { padding: var(--space-3) 0; border-bottom: 1px dashed var(--surface-line); }
+.ranking__item:last-child { border-bottom: none; }
+
+.ranking__row         { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.ranking__name        { font-weight: 600; color: var(--text-strong); }
+.ranking__score       { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+.ranking__bar {
+    height: 8px;
+    background: rgba(13, 27, 60, 0.08);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.ranking__fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8ed5f4 0%, var(--accent) 100%);
+    border-radius: var(--radius-pill);
+    transition: width 500ms var(--ease-soft);
+}
+
+
+/* -------------------------------------------------------------------
+   11. Reasoning grid
+   ------------------------------------------------------------------- */
+.transparency .panel__title { display: inline-block; }
+
+.reasoning-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+}
+
+.reasoning-card {
+    background: rgba(13, 27, 60, 0.03);
+    border: 1px solid var(--surface-line);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+}
+
+.reasoning-card__title {
+    font-size: 1rem;
+    color: var(--text-strong);
+    margin-bottom: 2px;
+}
+
+.reasoning-card__hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: var(--space-3);
+}
+
+.reasoning-card__empty {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+.reasoning-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-2);
+}
+
+.reasoning-list li {
+    display: flex;
+    justify-content: space-between;
+    background: #fff;
+    border: 1px solid var(--surface-line);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    color: var(--text-strong);
+}
+
+.reasoning-list--ordered { counter-reset: search-step; }
+.reasoning-list--ordered li::before {
+    counter-increment: search-step;
+    content: counter(search-step) ".";
+    margin-right: var(--space-2);
+    color: var(--text-muted);
+}
+
+.reasoning-list__name  { font-weight: 600; }
+.reasoning-list__score { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+.weights {
+    margin-top: var(--space-4);
+    background: rgba(13, 27, 60, 0.03);
+    border: 1px dashed var(--surface-line);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+}
+
+.weights__title {
+    font-size: 0.9rem;
+    color: var(--text-strong);
+    margin-bottom: var(--space-2);
+}
+
+.weights__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.weights__item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--surface-line);
+    font-size: 0.85rem;
+    color: var(--text-strong);
+}
+
+.weights__name  { font-weight: 600; }
+.weights__value { color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+
+/* -------------------------------------------------------------------
+   12. Responsive breakpoints
+   ------------------------------------------------------------------- */
+@media (max-width: 960px) {
+    .hero {
+        grid-template-columns: 1fr;
+        gap: var(--space-5);
+    }
+
+    .hero__left  { order: 1; }
+    .hero__right { order: 2; }
+
+    .baymax { --bm-scale: 0.85; }
+}
+
+@media (max-width: 640px) {
+    .container { padding: var(--space-4) var(--space-4) var(--space-6); }
+    .panel     { padding: var(--space-5); }
+
+    .hero__caption { display: none; }
+
+    .field__row { flex-direction: column; }
+    .btn--secondary { width: 100%; }
+
+    .baymax { --bm-scale: 0.75; }
+}
+
+
+/* -------------------------------------------------------------------
+   13. Utilities & accessibility
+   ------------------------------------------------------------------- */
+.visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0);
+    white-space: nowrap; border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+.chip--flash { animation: chip-flash 480ms ease; }
+
+@keyframes chip-flash {
+    0%   { background: rgba(76, 201, 240, 0.55); }
+    100% { background: var(--chip-bg); }
+}

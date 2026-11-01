@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Baymax - Your Personal Health Companion</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    />
+</head>
+<body class="page-home">
+
+    <header class="topbar">
+        <div class="topbar__brand">
+            <span class="brand-dot" aria-hidden="true"></span>
+            <span class="brand-name">Baymax</span>
+        </div>
+        <nav class="topbar__nav" aria-label="Primary">
+            <span class="badge badge--status" title="System status">
+                <span class="badge__pulse" aria-hidden="true"></span>
+                Online and ready
+            </span>
+        </nav>
+    </header>
+
+    <main class="container">
+
+        <section class="hero" aria-labelledby="hero-title">
+            <h1 id="hero-title" class="visually-hidden">
+                Baymax, your personal healthcare companion
+            </h1>
+
+            <!-- LEFT: Baymax figure + greeting bubble -->
+            <div class="hero__left">
+
+                <div
+                    class="speech-bubble"
+                    role="status"
+                    aria-live="polite"
+                    data-baymax-bubble
+                >
+                    <p
+                        class="speech-bubble__text"
+                        data-baymax-greeting
+                    >
+                        Hello, I am Baymax, your personal healthcare companion.
+                    </p>
+                </div>
+
+                <!-- Baymax-inspired figure, drawn in pure CSS.
+                     No copyrighted artwork is used. -->
+                <figure class="baymax" aria-hidden="true">
+                    <div class="baymax__head">
+                        <div class="baymax__eye baymax__eye--left"></div>
+                        <div class="baymax__eye baymax__eye--right"></div>
+                        <div class="baymax__eye-line"></div>
+                    </div>
+                    <div class="baymax__body">
+                        <div class="baymax__heart"></div>
+                        <div class="baymax__belt"></div>
+                    </div>
+                    <div class="baymax__arm baymax__arm--left"></div>
+                    <div class="baymax__arm baymax__arm--right"></div>
+                    <div class="baymax__shadow"></div>
+                </figure>
+
+                <figcaption class="hero__caption">
+                    A friendly, Baymax-inspired health companion.
+                </figcaption>
+            </div>
+
+            <!-- RIGHT: Symptom selector panel -->
+            <div class="hero__right">
+
+                <div class="panel" aria-labelledby="symptom-panel-title">
+                    <header class="panel__header">
+                        <h2 id="symptom-panel-title" class="panel__title">
+                            Tell me your symptoms
+                        </h2>
+                        <p class="panel__subtitle">
+                            Pick all the symptoms you are currently experiencing.
+                            I will analyze them and suggest the most likely
+                            condition.
+                        </p>
+                    </header>
+
+                    {% if not ml_available %}
+                    <div class="notice notice--warning" role="status">
+                        <strong>Heads up:</strong>
+                        The machine learning component has not been trained yet,
+                        so I will rely on rule-based and Bayesian reasoning only.
+                        You can still get a diagnosis.
+                    </div>
+                    {% endif %}
+
+                    <form
+                        action="{{ url_for('diagnose') }}"
+                        method="post"
+                        class="symptom-form"
+                        data-baymax-form
+                        novalidate
+                    >
+                        <div class="field">
+                            <label for="symptom-select" class="field__label">
+                                Symptom
+                            </label>
+                            <div class="field__row">
+                                <select
+                                    id="symptom-select"
+                                    class="select"
+                                    data-baymax-symptom-select
+                                    aria-describedby="symptom-help"
+                                >
+                                    <option value="" disabled selected>
+                                        Choose a symptom...
+                                    </option>
+                                    {% for symptom in symptoms %}
+                                    <option value="{{ symptom.id }}">
+                                        {{ symptom.label }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+
+                                <button
+                                    type="button"
+                                    class="btn btn--secondary"
+                                    data-baymax-add-symptom
+                                >
+                                    + Add
+                                </button>
+                            </div>
+                            <p id="symptom-help" class="field__help">
+                                Add as many symptoms as you need. You can
+                                remove any of them before diagnosing.
+                            </p>
+                        </div>
+
+                        <div
+                            class="chip-list"
+                            data-baymax-chip-list
+                            aria-live="polite"
+                            aria-label="Selected symptoms"
+                        >
+                            <p
+                                class="chip-list__empty"
+                                data-baymax-chip-empty
+                            >
+                                No symptoms selected yet.
+                            </p>
+                        </div>
+
+                        <!-- This hidden field is what the backend reads.
+                             Our JavaScript keeps it synchronized with
+                             the chip list. -->
+                        <input
+                            type="hidden"
+                            name="symptoms_csv"
+                            value=""
+                            data-baymax-symptoms-csv
+                        />
+
+                        <div class="form-actions">
+                            <button
+                                type="submit"
+                                class="btn btn--primary btn--lg"
+                                data-baymax-diagnose-button
+                                disabled
+                            >
+                                Diagnose
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn--ghost"
+                                data-baymax-clear-symptoms
+                            >
+                                Clear all
+                            </button>
+                        </div>
+
+                        <p class="form-disclaimer">
+                            Baymax is an educational AI prototype. It is
+                            <strong>not</strong> a substitute for professional
+                            medical advice, diagnosis, or treatment.
+                        </p>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="info-grid" aria-label="How Baymax works">
+            <article class="info-card">
+                <h3 class="info-card__title">Knowledge Base</h3>
+                <p class="info-card__text">
+                    A curated database of diseases and symptoms guides
+                    rule-based diagnosis.
+                </p>
+            </article>
+            <article class="info-card">
+                <h3 class="info-card__title">Bayesian Reasoning</h3>
+                <p class="info-card__text">
+                    Probabilistic inference handles uncertainty using
+                    Bayes' theorem.
+                </p>
+            </article>
+            <article class="info-card">
+                <h3 class="info-card__title">Best-First Search</h3>
+                <p class="info-card__text">
+                    Candidate diseases are ranked using a priority-driven
+                    search heuristic.
+                </p>
+            </article>
+            <article class="info-card">
+                <h3 class="info-card__title">Machine Learning</h3>
+                <p class="info-card__text">
+                    A trained classifier improves accuracy by learning
+                    patterns from data.
+                </p>
+            </article>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p class="footer__text">
+            Baymax - AI-Based Expert System for Medical Diagnosis.
+            For academic demonstration only.
+        </p>
+    </footer>
+
+    <!-- Inline JSON for the JS-driven UI.
+         The script reads this so it never needs a server round-trip
+         to know the symptom list and labels. -->
+    <script id="baymax-symptoms-data" type="application/json">
+        {{ symptoms | tojson }}
+    </script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

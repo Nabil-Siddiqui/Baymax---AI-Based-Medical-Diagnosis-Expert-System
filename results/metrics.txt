@@ -1,0 +1,28 @@
+Baymax - Model Evaluation Metrics
+========================================
+Model:               random_forest
+Test set size:       120
+Test fraction:       0.2
+Random state:        42
+
+Accuracy:            0.8250
+Precision (weighted):0.8276
+Recall (weighted):   0.8250
+F1-score (weighted): 0.8236
+
+Classification report
+----------------------------------------
+                precision    recall  f1-score   support
+
+     Allergies       0.71      0.80      0.75        15
+      COVID-19       0.73      0.73      0.73        15
+   Common Cold       0.67      0.53      0.59        15
+      Diabetes       1.00      0.93      0.97        15
+           Flu       0.76      0.87      0.81        15
+Food Poisoning       1.00      0.87      0.93        15
+       Malaria       0.94      1.00      0.97        15
+      Migraine       0.81      0.87      0.84        15
+
+      accuracy                           0.82       120
+     macro avg       0.83      0.82      0.82       120
+  weighted avg       0.83      0.82      0.82       120
